@@ -173,6 +173,7 @@
         function populateTable() {
             const months = ['תשרי', 'חשוון', 'כסלו', 'טבת', 'שבט', 'אדר', 'ניסן', 'אייר', 'סיוון', 'תמוז', 'אב', 'אלול'];
             let year = $('select option:selected').val();
+            $('aside').toggle(year == 5744);
             $('tr').empty();
             $('thead tr').append($('<th></th>'));
             let isLeapYear = isHebrewLeapYear(year);
@@ -187,11 +188,12 @@
                 $('tr#line' + i).append($('<th>' + gimatria(i) + '</th>'));
             }
             let roshHashana = calcRoshHashana(year);
+            console.log(roshHashana);
             let diff = roshHashana - RambamEpoch;
             let lastDayOfCurrentMonth = new Date(roshHashana);
             lastDayOfCurrentMonth.setDate(lastDayOfCurrentMonth.getDate() + 29);
             currentShiur = (diff % 339) || 339;
-            weekDay = diff % 7;
+            weekDay = diff % 7; // "RambamEpoch" was Saturday
             for (let month = 0; month < (isLeapYear ? 13 : 12); month++) {
                 for (let line = 1; line <= 29; line++) {
                     addCell(line);
@@ -208,11 +210,10 @@
         }
         $(document).ready(function () {
             $('select').change(populateTable);
-
-            const thisYear = new Date().getFullYear() + 3760;
-            for (let year = thisYear - 2; year < thisYear + 10; year++) {
+            for (let year = 5744; year <= 6000; year++) {
                 $('select').append($('<option>', { value: year, text: gimatria(year) }));
             }
+            const thisYear = parseInt(Intl.DateTimeFormat('he-u-ca-hebrew', { year: 'numeric' }).format(new Date()));
             $('select').val(thisYear).change();
         });
     </script>
@@ -220,9 +221,10 @@
 
 <body dir="rtl">
     <center>
-        <center>
+        <h3>
             מורה שיעור לספר המצוות לשנת <select id="YearSelector"></select>
-        </center>
+        </h3>
+        <aside>שיעורי הרמב"ם התחילו בתאריך כ"ז ניסן ה'תשד"ם</aside>
         <table border="solid 1px" cellspacing="0px" rowspacing="0px">
             <thead>
                 <tr></tr>
